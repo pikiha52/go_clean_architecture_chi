@@ -1,11 +1,15 @@
 package users
 
 import (
+	"context"
+	"learn_native/api/presenter"
+
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type Repository interface {
-	TestRepository() error
+	IndexRepository() (*[]presenter.User, error)
 }
 
 type repository struct {
@@ -18,6 +22,18 @@ func NewRepo(collection *mongo.Collection) Repository {
 	}
 }
 
-func (r *repository) TestRepository() error {
-	return nil
+func (r *repository) IndexRepository() (*[]presenter.User, error) {
+	var users []presenter.User
+	cursor, err := r.Collection.Find(context.Background(), bson.D{})
+	if err != nil {
+		return nil, err
+	}
+
+	for cursor.Next(context.TODO()) {
+		var user presenter.User
+		_ = cursor.Decode(&user)
+		users = append(users, user)
+	}
+
+	return &users, nil
 }

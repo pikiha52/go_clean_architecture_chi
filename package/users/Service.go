@@ -17,16 +17,5 @@ func NewService(repo Repository) Service {
 }
 
 func (s *service) IndexService() (*[]presenter.User, error) {
-	users := []presenter.User{
-		{
-			ID:          1,
-			Name:        "John doe",
-			Username:    "johndoe",
-			Email:       "johndoe@dev.com",
-			PhoneNumber: 628829100012,
-			Address:     "Jakarta, Indonesia",
-		},
-	}
-
-	return &users, nil
+	return s.repository.IndexRepository()
 }
