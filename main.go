@@ -24,7 +24,7 @@ func main() {
 		fmt.Println("Gagal menghubungkan ke MongoDB!")
 	}
 
-	collection := db.Collection("go_db")
+	collection := db.Collection("users")
 
 	userRepo := users.NewRepo(collection)
 	userService := users.NewService((userRepo))
