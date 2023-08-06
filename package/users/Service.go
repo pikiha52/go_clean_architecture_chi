@@ -1,9 +1,16 @@
 package users
 
-import "learn_native/api/presenter"
+import (
+	"encoding/json"
+	"learn_native/api/contract"
+	"learn_native/api/presenter"
+	"learn_native/package/entites"
+	"net/http"
+)
 
 type Service interface {
 	IndexService() (*[]presenter.User, error)
+	StoreService(httpRequest *http.Request) (*entites.Users, error)
 }
 
 type service struct {
@@ -18,4 +25,21 @@ func NewService(repo Repository) Service {
 
 func (s *service) IndexService() (*[]presenter.User, error) {
 	return s.repository.IndexRepository()
+}
+
+func (s *service) StoreService(httpRequest *http.Request) (*entites.Users, error) {
+	var contractCreate contract.UserCreate
+
+	err := json.NewDecoder(httpRequest.Body).Decode(&contractCreate)
+
+	if err != nil {
+		return nil, err
+	}
+
+	data, err := s.repository.StoreRepository(contractCreate)
+	if err != nil {
+		return nil, err
+	}
+
+	return data, nil
 }

@@ -2,14 +2,18 @@ package users
 
 import (
 	"context"
+	"learn_native/api/contract"
 	"learn_native/api/presenter"
+	"learn_native/package/entites"
 
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type Repository interface {
 	IndexRepository() (*[]presenter.User, error)
+	StoreRepository(contractCreate contract.UserCreate) (*entites.Users, error)
 }
 
 type repository struct {
@@ -36,4 +40,21 @@ func (r *repository) IndexRepository() (*[]presenter.User, error) {
 	}
 
 	return &users, nil
+}
+
+func (r *repository) StoreRepository(contractCreate contract.UserCreate) (*entites.Users, error) {
+	var user entites.Users
+	user.ID = primitive.NewObjectID()
+	user.Name = contractCreate.Name
+	user.Username = contractCreate.Username
+	user.Email = contractCreate.Email
+	user.PhoneNumber = contractCreate.PhoneNumber
+	user.Address = contractCreate.Address
+
+	_, err := r.Collection.InsertOne(context.Background(), user)
+	if err != nil {
+		return nil, err
+	}
+
+	return &user, nil
 }

@@ -1,14 +1,18 @@
 package presenter
 
-import "go.mongodb.org/mongo-driver/bson/primitive"
+import (
+	"learn_native/package/entites"
+
+	"go.mongodb.org/mongo-driver/bson/primitive"
+)
 
 type User struct {
 	ID          primitive.ObjectID `json:"id"  bson:"_id,omitempty"`
 	Name        string             `json:"name" bson:"name"`
 	Username    string             `json:"username" bson:"username"`
-	Email       string             `json:"email" bson:"email"`
-	PhoneNumber int                `json:"phone_number" bson:"phone_number"`
-	Address     string             `json:"address" bson:"address"`
+	Email       string             `json:"email" bson:"email,omitempty"`
+	PhoneNumber int                `json:"phone_number" bson:"phone_number,omitempty"`
+	Address     string             `json:"address" bson:"address,omitempty"`
 }
 
 func UsersSuccessResponse(data *[]User) map[string]interface{} {
@@ -21,12 +25,31 @@ func UsersSuccessResponse(data *[]User) map[string]interface{} {
 	return response
 }
 
+func UserSuccessResponse(data *entites.Users) map[string]interface{} {
+	user := User{
+		ID:          data.ID,
+		Name:        data.Name,
+		Username:    data.Username,
+		Email:       "",
+		PhoneNumber: 0,
+		Address:     "",
+	}
+
+	response := map[string]interface{}{
+		"statusCode": 201,
+		"message":    "Success",
+		"results":    user,
+	}
+
+	return response
+}
+
 func ErrorResponse(statusCode int, message string, errors error) map[string]interface{} {
 	response := map[string]interface{}{
 		"statusCode": statusCode,
 		"message":    message,
 		"results":    nil,
-		"error":      errors,
+		"error":      errors.Error(),
 	}
 
 	return response
