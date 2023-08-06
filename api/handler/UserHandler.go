@@ -88,3 +88,30 @@ func ShowHandler(service users.Service) http.HandlerFunc {
 		w.Write(encode)
 	}
 }
+
+func UpdateHandler(service users.Service) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+
+		id := chi.URLParam(r, "id")
+		objID, err := primitive.ObjectIDFromHex(id)
+		if err != nil {
+			responseError := presenter.ErrorResponse(500, "Gagal transform string ke objectID!", err)
+			encodeError, _ := json.Marshal(responseError)
+			w.WriteHeader(500)
+			w.Write(encodeError)
+			return
+		}
+
+		err = service.UpdateService(objID, r)
+		if err != nil {
+			w.Write([]byte("Error service!"))
+		}
+
+		response := presenter.UserUpdateResponse(200)
+		encode, _ := json.Marshal(response)
+
+		w.WriteHeader(200)
+		w.Write(encode)
+	}
+}

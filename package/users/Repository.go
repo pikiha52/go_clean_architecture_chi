@@ -16,6 +16,7 @@ type Repository interface {
 	IndexRepository() (*[]presenter.User, error)
 	StoreRepository(contractCreate contract.UserCreate) (*entites.Users, error)
 	ShowRepository(id primitive.ObjectID) (*entites.Users, error)
+	UpdateRepository(id primitive.ObjectID, contractUpdate contract.UserUpdate) error
 }
 
 type repository struct {
@@ -71,4 +72,23 @@ func (r *repository) ShowRepository(id primitive.ObjectID) (*entites.Users, erro
 	}
 
 	return &user, nil
+}
+
+func (r *repository) UpdateRepository(id primitive.ObjectID, contractUpdate contract.UserUpdate) error {
+	_, err := r.Collection.UpdateOne(
+		context.TODO(),
+		bson.D{{Key: "_id", Value: id}},
+		bson.D{{Key: "$set", Value: bson.D{
+			{Key: "name", Value: contractUpdate.Name},
+			{Key: "username", Value: contractUpdate.Username},
+			{Key: "email", Value: contractUpdate.Email},
+			{Key: "phone_number", Value: contractUpdate.PhoneNumber},
+			{Key: "address", Value: contractUpdate.Address},
+		}}})
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

@@ -44,6 +44,17 @@ func UserSuccessResponse(data *entites.Users, statusCode int) map[string]interfa
 	return response
 }
 
+func UserUpdateResponse(statusCode int) map[string]interface{} {
+	response := map[string]interface{}{
+		"statusCode": statusCode,
+		"message":    "Success",
+		"results":    nil,
+		"error":      nil,
+	}
+
+	return response
+}
+
 func ErrorResponse(statusCode int, message string, errors error) map[string]interface{} {
 	response := map[string]interface{}{
 		"statusCode": statusCode,

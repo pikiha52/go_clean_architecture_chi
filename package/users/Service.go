@@ -14,6 +14,7 @@ type Service interface {
 	IndexService() (*[]presenter.User, error)
 	StoreService(httpRequest *http.Request) (*entites.Users, error)
 	ShowService(id primitive.ObjectID) (*entites.Users, error)
+	UpdateService(id primitive.ObjectID, httpRequest *http.Request) error
 }
 
 type service struct {
@@ -55,4 +56,20 @@ func (s *service) ShowService(id primitive.ObjectID) (*entites.Users, error) {
 	}
 
 	return data, nil
+}
+
+func (s *service) UpdateService(id primitive.ObjectID, httpRequest *http.Request) error {
+	var contractUpdate contract.UserUpdate
+	err := json.NewDecoder(httpRequest.Body).Decode(&contractUpdate)
+
+	if err != nil {
+		return err
+	}
+
+	err = s.repository.UpdateRepository(id, contractUpdate)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
