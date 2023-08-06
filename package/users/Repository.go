@@ -2,6 +2,7 @@ package users
 
 import (
 	"context"
+	"errors"
 	"learn_native/api/contract"
 	"learn_native/api/presenter"
 	"learn_native/package/entites"
@@ -14,6 +15,7 @@ import (
 type Repository interface {
 	IndexRepository() (*[]presenter.User, error)
 	StoreRepository(contractCreate contract.UserCreate) (*entites.Users, error)
+	ShowRepository(id primitive.ObjectID) (*entites.Users, error)
 }
 
 type repository struct {
@@ -54,6 +56,18 @@ func (r *repository) StoreRepository(contractCreate contract.UserCreate) (*entit
 	_, err := r.Collection.InsertOne(context.Background(), user)
 	if err != nil {
 		return nil, err
+	}
+
+	return &user, nil
+}
+
+func (r *repository) ShowRepository(id primitive.ObjectID) (*entites.Users, error) {
+	var user entites.Users
+	err := r.Collection.FindOne(context.TODO(), bson.D{{Key: "_id", Value: id}}).Decode(&user)
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return nil, errors.New("User tidak ditemukan!")
+		}
 	}
 
 	return &user, nil

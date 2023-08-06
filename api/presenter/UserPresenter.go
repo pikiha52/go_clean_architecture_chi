@@ -25,18 +25,18 @@ func UsersSuccessResponse(data *[]User) map[string]interface{} {
 	return response
 }
 
-func UserSuccessResponse(data *entites.Users) map[string]interface{} {
+func UserSuccessResponse(data *entites.Users, statusCode int) map[string]interface{} {
 	user := User{
 		ID:          data.ID,
 		Name:        data.Name,
 		Username:    data.Username,
-		Email:       "",
-		PhoneNumber: 0,
-		Address:     "",
+		Email:       data.Email,
+		PhoneNumber: data.PhoneNumber,
+		Address:     data.Address,
 	}
 
 	response := map[string]interface{}{
-		"statusCode": 201,
+		"statusCode": statusCode,
 		"message":    "Success",
 		"results":    user,
 	}
