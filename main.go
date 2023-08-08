@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"learn_native/api/routes"
 	"learn_native/package/users"
+	"learn_native/package/wa"
 	"net/http"
 	"time"
 
@@ -25,9 +26,12 @@ func main() {
 	}
 
 	collection := db.Collection("users")
+	collectionOtp := db.Collection("otp")
 
 	userRepo := users.NewRepo(collection)
-	userService := users.NewService((userRepo))
+	waRepo := wa.NewRepo("https://waba-sandbox.360dialog.io/", collectionOtp)
+	waService := wa.NewService(waRepo)
+	userService := users.NewService(userRepo, waService)
 
 	chiRouter.Route("/api", func(r chi.Router) {
 		routes.SetupRouteUser(r, userService)

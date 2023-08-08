@@ -9,4 +9,5 @@ type Users struct {
 	Email       string             `json:"email" bson:"email"`
 	PhoneNumber int                `json:"phone_number" bson:"phone_number"`
 	Address     string             `json:"address,omitempty" bson:"address"`
+	Otp         []Otp              `json:"otp" bson:"otp"`
 }

@@ -12,4 +12,5 @@ func SetupRouteUser(chiRouter chi.Router, service users.Service) {
 	chiRouter.Post("/user", handler.StoreHandler(service))
 	chiRouter.Get("/user/{id}", handler.ShowHandler(service))
 	chiRouter.Put("/user/{id}", handler.UpdateHandler(service))
+	chiRouter.Patch("/user/{id}/otp", handler.UserOtpHandler(service))
 }

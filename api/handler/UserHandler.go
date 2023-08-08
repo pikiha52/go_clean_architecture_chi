@@ -115,3 +115,31 @@ func UpdateHandler(service users.Service) http.HandlerFunc {
 		w.Write(encode)
 	}
 }
+
+func UserOtpHandler(service users.Service) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		id := chi.URLParam(r, "id")
+		objID, err := primitive.ObjectIDFromHex(id)
+		if err != nil {
+			responseError := presenter.ErrorResponse(500, "Gagal transform string ke objectID!", err)
+			encodeError, _ := json.Marshal(responseError)
+			w.WriteHeader(500)
+			w.Write(encodeError)
+			return
+		}
+
+		err = service.UserOtpService(objID, r)
+		if err != nil {
+			responseError := presenter.ErrorResponse(500, "Error!", err)
+			encodeError, _ := json.Marshal(responseError)
+			w.WriteHeader(500)
+			w.Write(encodeError)
+			return
+		}
+
+		response := presenter.SuccessResponse(200, "Otp Found!")
+		encodeResponse, _ := json.Marshal(response)
+		w.Write(encodeResponse)
+	}
+}

@@ -15,3 +15,7 @@ type UserUpdate struct {
 	PhoneNumber int    `json:"phone_number" bson:"phone_number"`
 	Address     string `json:"address" bson:"address"`
 }
+
+type OtpCheck struct {
+	OtpCode int `json:"otp"`
+}
